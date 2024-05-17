@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personajes de Dragon Ball</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<h2>Personajes de Dragon Ball</h2>
+
+<table id="charactersTable">
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>Género</th>
+    <th>Raza</th>
+  </tr>
+</table>
+
+<script>
+    async function fetchCharacters() {
+        try {
+            const response = await fetch('https://dragonball-api.com/api/characters');
+            const data = await response.json();
+            console.log(data); // Imprimir los datos en la consola para inspeccionar la estructura
+
+            // Suponiendo que los personajes están en data.characters
+            const characters = data.items; // Ajusta esto según la estructura real de la respuesta
+
+            // Comprobamos si characters es un array
+            if (Array.isArray(characters)) {
+                const tableBody = document.getElementById('charactersTable');
+
+                characters.forEach(character => {
+                    const { id, name, gender, race } = character;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${id}</td>
+                        <td>${name}</td>
+                        <td>${gender}</td>
+                        <td>${race}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                console.error('La respuesta de la API no es un array:', characters);
+            }
+        } catch (error) {
+            console.error('Error al obtener los personajes:', error);
+        }
+    }
+
+    fetchCharacters();
+</script>
+
+</body>
+</html>

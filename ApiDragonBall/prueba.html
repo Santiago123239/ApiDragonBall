@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dragon Ball Character Search</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5%;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+      thead{
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        background-color: aqua;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Personajes de Dragon Ball</h1>
+    <form id="busquedaPersoanje">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" />
+      <label for="genero">Genero:</label>
+      <input type="text" id="genero" name="genero" />
+      <label for="raza">Raza:</label>
+      <input type="text" id="raza" name="raza" />
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="tablaDragonBall"></div>
+    <div id="busqueda"></div>
+
+    <script>
+
+        const url='https://dragonball-api.com/api/characters/';
+
+        function mostrarTabla(personaje){
+
+          const tabla=document.getElementById('tablaDragonBall');
+
+          const nombre=document.createElement('h5');
+          nombre.textContent=personaje.name;
+
+          const raza=document.createElement('p');
+          raza.textContent=personaje.race;
+
+          const genero=document.createElement('p');
+          genero.textContent=personaje.gender;
+
+          const descripcion=document.createElement('p');
+          descripcion.textContent=personaje.description;
+
+          const imagen=document.createElement('img');
+          imagen.src=personaje.image;
+          imagen.width=200;
+
+          const tablaDragonBall=document.createElement("div");
+          tablaDragonBall.appendChild(nombre);
+          tablaDragonBall.appendChild(raza);
+          tablaDragonBall.appendChild(genero);
+          tablaDragonBall.appendChild(descripcion);
+          tablaDragonBall.appendChild(imagen);
+          tablaDragonBall.style.backgroundColor='yellow'
+
+          tabla.appendChild(tablaDragonBall);
+
+        }
+
+        async function caracteres(){
+          
+          try{
+            const response = await fetch(url);
+            const {results}=await response.json();
+
+            for (const personaje of data) {
+            mostrarTabla(personaje);
+            }
+            console.log(results);
+          }catch(error){
+            console.error(error);
+          }
+        }
+
+        document
+          .getElementById("busquedaPersoanje")
+          .addEventListener("submit", function (event) {
+            event.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            const genero = document.getElementById("genero").value;
+            const raza = document.getElementById("raza").value;
+            buscadorPersonajes(nombre, genero, raza);
+            buscarPorNombre(nombre);
+          });
+
+        function buscarPorNombre(nombre){
+          const url = `https://dragonball-api.com/api/characters?name=${name}`;
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              mostrarResultados(data);
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+
+        function mostrarResultados(personaje) {
+          let tablaPersonaje = `<table>
+                              <tr>
+                                  <th>ID</th>
+                                  <th>Nombre</th>
+                                  <th>Raza</th>
+                                  <th>Genero</th>
+                                  <th>Descripción</th>
+                              </tr>`;
+
+          if (personaje.length === 0) {
+            tablaPersonaje += `<tr><td colspan="5">No se encontraron resultados</td></tr>`;
+          } else {
+            personaje.forEach((personaje) => {
+              tablaPersonaje += `<tr>
+                                    <td>${personaje.id}</td>
+                                    <td>${personaje.name}</td>
+                                    <td>${personaje.race}</td>
+                                    <td>${personaje.gender}</td>
+                                    <td>${personaje.description || "N/A"}</td>
+                                    <td><img${personaje.image}/></td>
+                                 </tr>`;
+            });
+          }
+
+          tablaPersonaje += `</table>`;
+          document.getElementById("busqueda").innerHTML = tablaPersonaje;
+        }
+        
+        function buscadorPersonajes(name, gender, race) {
+          const url = `https://dragonball-api.com/api/characters?name=${name}&gender=${gender}&race=${race}`;
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              mostrarResultados(data);
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+
+        function mostrarResultados(personaje) {
+          let tablaPersonaje = `<table>
+                              <tr>
+                                  <th>ID</th>
+                                  <th>Nombre</th>
+                                  <th>Raza</th>
+                                  <th>Genero</th>
+                                  <th>Descripción</th>
+                                  <th>Imagen</th>
+                              </tr>`;
+
+          if (personaje.length === 0) {
+            tablaPersonaje += `<tr><td colspan="5">No se encontraron resultados</td></tr>`;
+          } else {
+            personaje.forEach((personaje) => {
+              tablaPersonaje += `<tr>
+                                    <td>${personaje.id}</td>
+                                    <td>${personaje.name}</td>
+                                    <td>${personaje.race}</td>
+                                    <td>${personaje.gender}</td>
+                                    <td>${personaje.description || "N/A"}</td>
+                                    <td><img ${personaje.image}/></td>
+                                 </tr>`;
+            });
+          }
+
+          tablaPersonaje += `</table>`;
+          document.getElementById("busqueda").innerHTML = tablaPersonaje;
+        }
+        caracteres();
+    </script>
+  </body>
+</html>
